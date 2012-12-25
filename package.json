@@ -1,0 +1,25 @@
+{
+    "name": "redisq",
+    "version": "0.0.1",
+    "homepage": "https://github.com/runk/redisq",
+    "description": "Fast redis based queue",
+    "keywords": ["redis", "queue"],
+    "author": "Shirokov Dmitry <deadrunk@gmail.com>",
+    "dependencies": {
+        "redis": "0.8.2"
+    },
+    "repository": {
+        "type":"git",
+        "url":"git@github.com:runk/redisq.git"
+    },
+    "bugs": {
+      "mail":"deadrunk@gmail.com",
+      "url":"http://github.com/runk/redisq/issues"
+    },
+    "main": "index.js",
+    "engine": { "node": ">=0.8.0", "npm": "1" },
+    "licences": [{
+        "type":"LGPL2.1",
+        "url": "http://www.gnu.org/licenses/lgpl-2.1.txt"
+    }]
+}
