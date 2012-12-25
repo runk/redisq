@@ -1,6 +1,5 @@
 var assert = require("assert"),
-    Task  = require("../lib/task"),
-    async  = require("async");
+    Task  = require("../lib/task");
 
 var qtask = { "one": 1, "two": 2, "three": 3 };
 

@@ -1,8 +1,7 @@
 
 
 var assert = require("assert"),
-    Queue  = require("../lib/queue"),
-    async  = require("async");
+    Queue  = require("../lib/queue");
 
 var qname = "test",
     qtask = JSON.stringify({ "one": 1, "two": 2, "three": 3 });
@@ -90,19 +89,19 @@ describe("/queue", function() {
 
         it("should create a bunch of tasks", function(done) {
 
-            var wfunc = function(res, callback) {
-                if (!callback)
-                    callback = res;
-                q.push(qtask, callback);
-            }
-
+            var tasksPushed = 0;
             var tasks = [];
             for (var i = 0; i < tasksn; i++)
-                tasks.push(wfunc);
+                q.push('dummy', function(err, res) {
+                    assert.equal(err, null);
+                    assert.equal(res, true);
+                    tasksPushed++;
+                });
 
-            async.waterfall(tasks, function(err, res) {
+            setTimeout(function() {
+                assert.equal(tasksn, tasksPushed);
                 done();
-            });
+            }, 10);
         });
 
         it("should start processing and maintain counters correct", function(done) {
