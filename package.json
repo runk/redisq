@@ -1,12 +1,15 @@
 {
     "name": "redisq",
-    "version": "0.0.2",
+    "version": "0.1.0",
     "homepage": "https://github.com/runk/redisq",
     "description": "Fast redis based queue",
     "keywords": ["redis", "queue"],
     "author": "Shirokov Dmitry <deadrunk@gmail.com>",
     "dependencies": {
-        "redis": "0.8.2"
+        "redis": "0.8.2",
+        "express": "3.0.5",
+        "jade": "0.27.7",
+        "async": "0.1.22"
     },
     "repository": {
         "type":"git",

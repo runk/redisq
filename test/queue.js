@@ -1,7 +1,8 @@
 
 
 var assert = require("assert"),
-    Queue  = require("../lib/queue");
+    Queue  = require("../lib/queue"),
+    redisq = require("../lib/redisq");
 
 var qname = "test",
     qtask = JSON.stringify({ "one": 1, "two": 2, "three": 3 });
@@ -80,6 +81,30 @@ describe("/queue", function() {
                     done();
                 });
             });
+        });
+    });
+
+    describe("#unregister", function() {
+        it("should unregister the queue", function(done) {
+            var q = new Queue(qname);
+            q.unregister(function() {
+                redisq.getQueues(function(err, queues) {
+                    assert.ok(!(qname in queues));
+                    done();
+                });
+            })
+        });
+    });
+
+    describe("#register", function() {
+        it("should register the queue", function(done) {
+            var q = new Queue(qname);
+            q.register(function() {
+                redisq.getQueues(function(err, queues) {
+                    assert.ok(qname in queues);
+                    done();
+                });
+            })
         });
     });
 

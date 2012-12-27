@@ -1,0 +1,77 @@
+extends layout
+
+block append head
+  script(src="//code.highcharts.com/stock/highstock.js")
+  script
+    $(document).ready(function() {
+      $.getJSON("/queues/#{name}/history", function(data) {
+
+        window.chart = new Highcharts.StockChart({
+          global: { useUTC: false },
+          rangeSelector: {
+            inputEnabled: false,
+            buttons: [
+                { type: 'hour', count: 1, text: '1h' },
+                { type: 'day', count: 1, text: '1d' },
+                { type: 'all', text: 'all' }
+            ],
+            selected: 1
+          },
+          chart: { renderTo: 'chartbox' },
+          title: { text: null },
+          series: [{
+              name: 'Processed',
+              data: data.processed,
+              type: 'spline'
+          }, {
+              name: 'Failed',
+              data: data.failed,
+              type: 'spline'
+          }, {
+              name: 'Queued',
+              data: data.queued,
+              type: 'spline'
+          }]
+        });
+      });
+    });
+
+
+block contents
+  h3 Queues / #{name}
+  hr
+
+  if found
+    if stats.counters.failed > 0
+      .row-fluid
+        ul.thumbnails.queue-counters
+          li.span3
+            .thumbnail
+              .caption
+                strong Queued
+                h3= addCommas(stats.counters.queued)
+          li.span3
+            .thumbnail
+              .caption
+                strong Processed
+                h3= addCommas(stats.counters.processed)
+          li.span3
+            .thumbnail
+              .caption
+                strong Failed
+                h3= addCommas(stats.counters.failed)
+                  small  #{(stats.counters.failed*100/(stats.counters.processed + stats.counters.failed)).toFixed(2)}%
+          li.span3
+            .thumbnail
+              .caption
+                strong Speed
+                h3= addCommas(stats.speed)
+                  small  tasks/minute
+
+      #chartbox
+
+  else
+    .alert.alert-block
+      h4 Error
+      p Queue with given name does not found
+
