@@ -4,6 +4,29 @@ var assert = require("assert"),
 
 describe("/index", function() {
 
+    describe("#options", function() {
+        it("should save settings passed to the func", function() {
+            redisq.options({
+                "redis": { "host": "127.0.0.1", "port": 6380 }
+            });
+            assert.equal(redisq.options().redis.host, "127.0.0.1");
+            assert.equal(redisq.options().redis.port, 6380);
+        });
+        it("should update options once client is confugured", function() {
+            redisq.options({
+                "redis": { "host": "localhost", "port": 6379 }
+            });
+
+            assert.equal(redisq.options().redis.host, "localhost");
+            assert.equal(redisq.options().redis.port, 6379);
+        });
+        it("should return options if no arguments were passed", function() {
+            var opts = redisq.options();
+            assert.equal(typeof opts, "object");
+            assert.equal(typeof opts.redis, "object");
+        });
+    });
+
     describe("#queue", function() {
         it("new queue should be created", function() {
             var q = redisq.queue("test");
