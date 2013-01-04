@@ -15,9 +15,9 @@ Sample code that shows how to create a new task and push it to the queue.
 
     var redisq = require('redisq');
     var queue = redisq.queue('dummy');
-    queue.push({ "custom": "task data", "another": 123, "data": [10, 20, 30] });
+    queue.push({ "custom": "task data", "foo": { "bar": true }, "data": [10, 20] });
 
-To process your messages you have to can create one or multiply clients that will
+To process your messages you have to create one or multiply clients that will
 'listen' for new tasks and handle them in appropriate way.
 
     var redisq = require('redisq'),
@@ -35,7 +35,7 @@ Please note that you have to call `done` function and pass error as the first ar
 
 ## Frontend
 
-Modules has a useful frontend that you can use for monitoring your queues state. To run
+Module has a useful frontend that you can use for monitoring of the queue status. To run
 it use the following code:
 
     var frontend = require('redisq/frontend');
