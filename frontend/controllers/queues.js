@@ -48,13 +48,15 @@ module.exports.history = function(req, res) {
 				var result = {
 					"processed": [],
 					"failed":    [],
-					"queued":    []
+					"backlog":   []
 				};
 
 				stats.history.map(function(row) {
-					result.processed.push([row.createdAt * 1000, row.processed]);
-					result.failed.push([row.createdAt * 1000, row.failed]);
-					result.queued.push([row.createdAt * 1000, row.queued]);
+					result.processed.push([row.createdAt, row.processed]);
+					result.failed.push([row.createdAt, row.failed]);
+
+					var backlog = row.created - row.processed;
+					result.backlog.push([row.createdAt, backlog > 0 ? backlog : null]);
 				});
 
 				res.send(JSON.stringify(result));

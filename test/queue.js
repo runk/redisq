@@ -17,6 +17,7 @@ describe("/queue", function() {
             assert.equal(q.worker, null);
             assert.equal(q.workersActive, 0);
             assert.equal(q.concurrency, 1);
+            assert.equal(typeof q.stats, "function");
         });
     });
 

@@ -19,18 +19,27 @@ block append head
           },
           chart: { renderTo: 'chartbox' },
           title: { text: null },
+          plotOptions: {
+            spline: {
+              marker : { enabled : true, radius : 3 },
+              shadow : true
+            }
+          },
           series: [{
               name: 'Processed',
               data: data.processed,
-              type: 'spline'
+              type: 'spline',
+              color: '#393'
           }, {
               name: 'Failed',
               data: data.failed,
-              type: 'spline'
+              type: 'spline',
+              color: '#903'
           }, {
-              name: 'Queued',
-              data: data.queued,
-              type: 'spline'
+              name: 'Backlog',
+              data: data.backlog,
+              type: 'spline',
+              color: '#f66'
           }]
         });
       });
