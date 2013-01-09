@@ -159,6 +159,72 @@ describe("/queue", function() {
             })
         });
 
+        it("should not lost task if it was failed first time", function(done) {
+            var first = true;
+            var processed = 0;
+            var worker = function(task, cb) {
+                if (first) {
+                    first = false;
+                    cb(true, null);
+                } else {
+                    cb(null, true);
+                    setTimeout(checks, 10);
+                }
+                processed++;
+            };
+
+            var checks = function() {
+                assert.equal(processed, 2);
+                q.len(function(err, len) {
+                    assert.equal(len, 0);
+                    done();
+                });
+            };
+
+            q.purge(function(err, res) {
+                q.len(function(err, len) {
+
+                    assert.equal(len, 0);
+
+                    q.push('dummy', function(err, res) {
+                        assert.ok(res);
+                        q.process(worker, 4);
+                    });
+                });
+            });
+        });
+
+        it("should process all failed tasks", function(done) {
+            var tasks = { a: 0, b: 0, c: 0, d: 0, e: 0, f: 0, g: 0, h: 0, i: 0, j: 0 };
+            var processed = 0;
+
+            var worker = function(task, cb) {
+                var err = Math.random() < 0.5;
+                tasks[task] = err ? 0 : 1;
+                cb(err ? err : null, err ? null : true);
+
+                processed++;
+
+                var total = 0;
+                for (var t in tasks)
+                    total += tasks[t];
+
+                // ckeck whether all tasks were processed or not
+                if (total == Object.keys(tasks).length) {
+                    q.len(function(err, len) {
+                        assert.equal(len, 0);
+                        assert.ok(processed > Object.keys(tasks).length);
+                        done();
+                    });
+                }
+            };
+
+            for (var t in tasks)
+                q.push(t, function() {});
+
+            q.process(worker, 4);
+        });
+
     });
 
 });
