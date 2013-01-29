@@ -38,9 +38,29 @@ module.exports.purge = function(req, res) {
     });
 };
 
+function _groupBy(data, g) {
+    var hash = {};
+
+    for (var i = data.length - 1; i >= 0; i--)
+        hash[Math.floor(data[i].createdAt/g)*g] = data[i];
+
+
+
+
+}
 module.exports.history = function(req, res) {
     var name = req.params.name,
         last = req.query.last || '';
+
+    var min = req.query.min || -1,
+        max = req.query.max || -1;
+
+    var grouping = 'ss'
+    if (Math.ceil(max - min) > 3600000 * 24)
+        grouping = 'dd';
+    if (Math.ceil(max - min) > 3600000)
+        grouping = 'hh';
+    console.log(min, max, grouping)
 
     redisq.hasQueue(name, function(err, exists) {
         if (!exists || err)
@@ -87,4 +107,6 @@ module.exports.resetCounters = function(req, res) {
         });
     });
 };
+
+
 

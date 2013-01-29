@@ -7,8 +7,7 @@ $(document).ready(function() {
       SERIES_BACKLOG   = 2;
 
   var dummy = [
-    [ Date.UTC(2013, 1, 1, 0, 0), 0, ],
-    [ new Date().getTime(), 0]
+    [ Date.UTC(2011, 1, 1, 0, 0), 0 ]
   ];
   var _chart = new Highcharts.StockChart({
     global: { useUTC: false },
@@ -33,21 +32,46 @@ $(document).ready(function() {
     },
     series: [{
         name: 'Processed',
-        data: [[new Date().getTime(), 0]],
+        data: [].concat(dummy),
         type: 'spline',
         color: '#393'
     }, {
         name: 'Failed',
-        data: [[new Date().getTime(), 0]],
+        data: [].concat(dummy),
         type: 'spline',
         color: '#903'
     }, {
         name: 'Backlog',
-        data: [[new Date().getTime(), 0]],
+        data: [].concat(dummy),
         type: 'spline',
         color: '#f66'
-    }]
+    }],
+    xAxis : {
+      events : {
+        afterSetExtremes: afterSetExtremes
+      },
+      minRange: 3600 * 1000
+    },
   });
+
+  function afterSetExtremes(e) {
+    var url,
+      currentExtremes = this.getExtremes();
+
+    _chart.showLoading('Loading data from server...');
+
+    $.getJSON("/queues/" + qname + "/history", { last: _last, min: e.min, max: e.max }, function(stats) {
+
+      // chart.series[0].setData(data);
+      if (stats.history) {
+        _chart.series[SERIES_PROCESSED].setData(stats.history.processed);
+        _chart.series[SERIES_FAILED].setData(stats.history.failed);
+        _chart.series[SERIES_BACKLOG].setData(stats.history.backlog);
+      }
+
+      _chart.hideLoading();
+    });
+  };
 
 
   function _loadData() {
