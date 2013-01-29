@@ -2,82 +2,45 @@ extends layout
 
 block append head
   script(src="//code.highcharts.com/stock/highstock.js")
+  script(src="/js/queue.js")
   script
-    $(document).ready(function() {
-      $.getJSON("/queues/#{name}/history", function(data) {
-
-        window.chart = new Highcharts.StockChart({
-          global: { useUTC: false },
-          rangeSelector: {
-            inputEnabled: false,
-            buttons: [
-                { type: 'hour', count: 1, text: '1h' },
-                { type: 'day', count: 1, text: '1d' },
-                { type: 'all', text: 'all' }
-            ],
-            selected: 1
-          },
-          chart: { renderTo: 'chartbox' },
-          title: { text: null },
-          plotOptions: {
-            spline: {
-              marker : { enabled : true, radius : 3 },
-              shadow : true
-            }
-          },
-          series: [{
-              name: 'Processed',
-              data: data.processed,
-              type: 'spline',
-              color: '#393'
-          }, {
-              name: 'Failed',
-              data: data.failed,
-              type: 'spline',
-              color: '#903'
-          }, {
-              name: 'Backlog',
-              data: data.backlog,
-              type: 'spline',
-              color: '#f66'
-          }]
-        });
-      });
-    });
-
+    var qname = '#{name}';
 
 block contents
+  button#btnResetCounters.btn.btn-mini.pull-right Reset Counters
   h3 Queues / #{name}
   hr
 
   if found
-    if stats.counters.failed > 0
-      .row-fluid
-        ul.thumbnails.queue-counters
-          li.span3
-            .thumbnail
-              .caption
-                strong Queued
-                h3= addCommas(stats.counters.queued)
-          li.span3
-            .thumbnail
-              .caption
-                strong Processed
-                h3= addCommas(stats.counters.processed)
-          li.span3
-            .thumbnail
-              .caption
-                strong Failed
-                h3= addCommas(stats.counters.failed)
-                  small  #{(stats.counters.failed*100/(stats.counters.processed + stats.counters.failed)).toFixed(2)}%
-          li.span3
-            .thumbnail
-              .caption
-                strong Speed
-                h3= addCommas(stats.speed)
-                  small  tasks/minute
 
-      #chartbox
+    .row-fluid
+      ul.thumbnails.queue-counters
+        li.span3
+          .thumbnail
+            .caption
+              strong Queued
+              h3.queued= addCommas(stats.counters.queued)
+        li.span3
+          .thumbnail
+            .caption
+              strong Processed
+              h3.processed= addCommas(stats.counters.processed)
+        li.span3
+          .thumbnail
+            .caption
+              strong Failed
+              h3.failed
+                span= addCommas(stats.counters.failed)
+                &nbsp;
+                small.failedrate #{(stats.counters.failed*100/(stats.counters.processed + stats.counters.failed) || 0).toFixed(2)}%
+        li.span3
+          .thumbnail
+            .caption
+              strong Speed
+              h3= addCommas(stats.speed)
+                small  tasks/minute
+
+    #chartbox
 
   else
     .alert.alert-block
