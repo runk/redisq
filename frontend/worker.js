@@ -20,7 +20,8 @@ app.get("/", require(__dirname + '/controllers/index').index);
 app.get("/queues/:name", require(__dirname + '/controllers/queues').show);
 app.get("/queues/:name/history", require(__dirname + '/controllers/queues').history);
 app.post("/queues/:name/purge", require(__dirname + '/controllers/queues').purge);
-app.post("/queues/:name/reset-counters", require(__dirname + '/controllers/queues').resetCounters);
+app.post("/queues/:name/counters-reset", require(__dirname + '/controllers/queues').countersReset);
+app.get("/queues/:name/counters", require(__dirname + '/controllers/queues').countersGet);
 app.get("/status", require(__dirname + '/controllers/status'));
 
 

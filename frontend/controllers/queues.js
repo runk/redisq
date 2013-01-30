@@ -38,16 +38,6 @@ module.exports.purge = function(req, res) {
     });
 };
 
-function _groupBy(data, g) {
-    var hash = {};
-
-    for (var i = data.length - 1; i >= 0; i--)
-        hash[Math.floor(data[i].createdAt/g)*g] = data[i];
-
-
-
-
-}
 module.exports.history = function(req, res) {
     var name = req.params.name,
         last = req.query.last || '';
@@ -55,18 +45,20 @@ module.exports.history = function(req, res) {
     var min = req.query.min || -1,
         max = req.query.max || -1;
 
-    var grouping = 'ss'
-    if (Math.ceil(max - min) > 3600000 * 24)
-        grouping = 'dd';
-    if (Math.ceil(max - min) > 3600000)
+    var grouping = 'hh';
+    if (Math.ceil(max - min) > 60000)
+        grouping = 'mm';
+    if (Math.ceil(max - min) > 3600000 * 6)
         grouping = 'hh';
-    console.log(min, max, grouping)
+    if (Math.ceil(max - min) > 3600000 * 24 * 7)
+        grouping = 'dd';
 
     redisq.hasQueue(name, function(err, exists) {
         if (!exists || err)
             return res.send({ "status": "notfound" });
 
-        redisq.queue(name).stats(function(err, stats) {
+        var stats = new Stats(name);
+        stats.normalize({ grouping: grouping }, function(err, stats) {
             var result = {
                 "processed": [],
                 "failed":    [],
@@ -74,8 +66,11 @@ module.exports.history = function(req, res) {
             };
 
             stats.history.map(function(row) {
-                result.processed.push([row.createdAt, row.processed]);
-                result.failed.push([row.createdAt, row.failed]);
+                if (min > 0 && min > row.createdAt) return;
+                if (max > 0 && max < row.createdAt) return;
+
+                result.processed.push([row.createdAt, row.processed || null]);
+                result.failed.push([row.createdAt, row.failed || null]);
 
                 var backlog = row.created - row.processed;
                 result.backlog.push([row.createdAt, backlog > 0 ? backlog : null]);
@@ -94,7 +89,7 @@ module.exports.history = function(req, res) {
     });
 };
 
-module.exports.resetCounters = function(req, res) {
+module.exports.countersReset = function(req, res) {
     var name = req.params.name;
 
     redisq.hasQueue(name, function(err, exists) {
@@ -102,8 +97,22 @@ module.exports.resetCounters = function(req, res) {
             return res.send({ "status": "notfound" });
 
         var stats = new Stats(name);
-        stats.resetCounters(function(err, status) {
-            res.send({ "status": status });
+        stats.countersRest(function(err, status) {
+            res.send({ "status": status, "err": err });
+        });
+    });
+};
+
+module.exports.countersGet = function(req, res) {
+    var name = req.params.name;
+
+    redisq.hasQueue(name, function(err, exists) {
+        if (!exists || err)
+            return res.send({ "status": "notfound" });
+
+        var stats = new Stats(name);
+        stats.countersGet(function(err, counters) {
+            res.send({ "counters": counters, "err": err });
         });
     });
 };
