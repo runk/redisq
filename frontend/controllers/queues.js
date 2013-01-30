@@ -97,7 +97,7 @@ module.exports.countersReset = function(req, res) {
             return res.send({ "status": "notfound" });
 
         var stats = new Stats(name);
-        stats.countersRest(function(err, status) {
+        stats.countersReset(function(err, status) {
             res.send({ "status": status, "err": err });
         });
     });
