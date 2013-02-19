@@ -3,7 +3,7 @@
 var assert = require("assert"),
     redis  = require("../lib/redis");
 
-describe("/redis", function() {
+describe("/lib/redis", function() {
 
     describe("#options", function() {
         it("should return default options", function() {

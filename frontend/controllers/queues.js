@@ -45,7 +45,7 @@ module.exports.history = function(req, res) {
     var min = req.query.min || -1,
         max = req.query.max || -1;
 
-    var grouping = 'hh';
+    var grouping = 'auto';
     if (Math.ceil(max - min) > 60000)
         grouping = 'mm';
     if (Math.ceil(max - min) > 3600000 * 6)
@@ -89,6 +89,20 @@ module.exports.history = function(req, res) {
     });
 };
 
+module.exports.historyReset = function(req, res) {
+    var name = req.params.name;
+
+    redisq.hasQueue(name, function(err, exists) {
+        if (!exists || err)
+            return res.send({ "status": "notfound" });
+
+        var stats = new Stats(name);
+        stats.historyReset(function(err, status) {
+            res.send({ "status": status, "err": err });
+        });
+    });
+};
+
 module.exports.countersReset = function(req, res) {
     var name = req.params.name;
 
@@ -116,6 +130,5 @@ module.exports.countersGet = function(req, res) {
         });
     });
 };
-
 
 

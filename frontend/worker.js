@@ -22,6 +22,7 @@ app.get("/queues/:name/history", require(__dirname + '/controllers/queues').hist
 app.post("/queues/:name/purge", require(__dirname + '/controllers/queues').purge);
 app.post("/queues/:name/counters-reset", require(__dirname + '/controllers/queues').countersReset);
 app.get("/queues/:name/counters", require(__dirname + '/controllers/queues').countersGet);
+app.post("/queues/:name/history-reset", require(__dirname + '/controllers/queues').historyReset);
 app.get("/status", require(__dirname + '/controllers/status'));
 
 

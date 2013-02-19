@@ -3,7 +3,7 @@ var assert = require("assert"),
 
 var qtask = { "one": 1, "two": 2, "three": 3 };
 
-describe("/task", function() {
+describe("/lib/task", function() {
 
     describe("#constructor", function() {
         it("should create new instance of the Task", function() {

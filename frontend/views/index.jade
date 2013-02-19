@@ -12,16 +12,16 @@ block contents
         th Processed tasks
         th Failed tasks
     tbody
-      if Object.keys(stats).length == 0
+      if stats.length == 0
         tr
           td(colspan="4") Nothing were found
       else
-        each res, qname in stats
+        each row in stats
           tr
             td
-              a(href="/queues/#{qname}")= qname
-            td= addCommas(stats[qname].counters.queued)
-            td= addCommas(stats[qname].counters.processed)
-            td= addCommas(stats[qname].counters.failed)
+              a(href="/queues/#{row.qname}")= row.qname
+            td= addCommas(row.counters.queued)
+            td= addCommas(row.counters.processed)
+            td= addCommas(row.counters.failed)
 
 

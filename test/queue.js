@@ -7,7 +7,7 @@ var assert = require("assert"),
 var qname = "test",
     qtask = JSON.stringify({ "one": 1, "two": 2, "three": 3 });
 
-describe("/queue", function() {
+describe("/lib/queue", function() {
 
     describe("#constructor", function() {
         it("should create new instance of the Queue", function() {

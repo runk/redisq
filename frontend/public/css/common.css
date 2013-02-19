@@ -3,5 +3,5 @@ body { padding-top: 60px; }
 .capitalize { text-transform: capitalize; }
 .uppercase { text-transform: uppercase; }
 
-
 ul.thumbnails.queue-counters h3 { margin: 0; }
+.btn-control { margin-left: 10px; }
