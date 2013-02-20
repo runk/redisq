@@ -3,7 +3,7 @@ var assert = require("assert"),
 
 
 describe("/lib/stats", function() {
-    describe("#historyVacuum", function() {
+    describe("#parseAndGroup", function() {
         var qrecords = [
             '[1360684264000,100,10,1,200,500,1000]',
             '[1360684264000,200,20,2,250,550,2000]',
@@ -11,22 +11,42 @@ describe("/lib/stats", function() {
             '[1360684265000,400,40,4,350,650,4000]',
             '[1360684265000,500,50,5,400,700,5000]',
             '[1360684267000,600,60,6,450,750,6000]',
-            '[1360684367000,100,10,1,450,750,6000]' ];
+            '[1360684367000,100,10,1,450,750,6001]'
+        ];
 
         var good = {
-            1360684320000: '[1360684320000,100,10,1,450,750,6000]',
-            1360684260000: '[1360684260000,2100,210,21,46,110,284]' };
+            1360684320000: '[1360684320000,100,10,1,450,750,6001]',
+            1360684260000: '[1360684260000,2100,210,21,1950,3750,21000]'
+        };
 
         var qstats = new Stats("test"),
-            res = qstats.historyVacuum(qrecords);
+            res = qstats.parseAndGroup(qrecords, 60000);
 
-        it("should return equal length", function() {
+        it("should melt rows and return only two", function() {
             assert.equal(Object.keys(good).length, Object.keys(good).length);
         });
 
-        it("should return equal values", function() {
-            for (date in res)
-                assert.equal(res[date], good[date]);
+        it("should return proper values", function() {
+            for (var date in res)
+                assert.equal(JSON.stringify(res[date]), good[date]);
+        });
+    });
+
+    describe("#erase", function() {
+        var s = new Stats('test');
+
+        s.cnt.failed++;
+        s.cnt.processed++;
+        s.cnt.created++;
+        s.cnt.timeStarted++;
+        s.cnt.timeProcessed++;
+        s.cnt.timeFinished++;
+
+        it('should set all counters to 0', function() {
+            s.erase();
+
+            for (var cname in s.cnt)
+                assert.equal(s.cnt[cname], 0);
         });
     });
 });
