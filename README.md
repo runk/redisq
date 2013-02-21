@@ -56,4 +56,17 @@ In case if you want to customize host, port etc, you can pass additional argumen
         }
     });
 
-By default queue saves statistics to redis once a minute and stores it for 1 day (24 hrs).
+By default queue saves statistics to redis once a minute and stores it for 14 days.
+
+Also you can setup your monitoring tools to check the queue health by using special `/status` uri:
+
+    $ curl "http://localhost:3000/status"
+    {
+      "status": 200,
+      "queued": 2651,
+      "problems": {}
+    }
+
+This method returns `200` if everything is fine, otherwise status would be `500`. The check fetches
+last 15 minutes of history and detects if your workers can't handle all tasks you create.
+
