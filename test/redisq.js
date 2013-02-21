@@ -61,4 +61,25 @@ describe("/index", function() {
             });
         });
     });
+
+    describe("#getCounters", function() {
+        it("should return counters and at least do not crash", function(done) {
+            redisq.getCounters(function(err, counters) {
+                assert.equal(typeof counters, "object");
+                assert.ok(Object.keys(counters).length > 0);
+                assert.ok(counters.hasOwnProperty("test"));
+                done();
+            });
+        });
+        it("should return counters obj with proper keys", function(done) {
+            redisq.getCounters(function(err, counters) {
+                assert.ok(counters.test.hasOwnProperty('queued'));
+                assert.ok(counters.test.hasOwnProperty('processed'));
+                assert.ok(counters.test.hasOwnProperty('failed'));
+                assert.ok(counters.test.hasOwnProperty('created'));
+                done();
+            });
+        });
+    });
+
 });
