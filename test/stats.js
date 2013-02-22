@@ -49,4 +49,21 @@ describe("/lib/stats", function() {
                 assert.equal(s.cnt[cname], 0);
         });
     });
+
+    describe("#getGroupingValue", function() {
+        var s = new Stats('test');
+
+        it('should return minutes', function() {
+            assert.equal(s.getGroupingValue(120), 60000);
+        });
+
+        it('should return hours', function() {
+            assert.equal(s.getGroupingValue(1000), 3600000);
+        });
+
+        it('should return days', function() {
+            assert.equal(s.getGroupingValue(9999), 3600000 * 24);
+        });
+    });
+
 });
