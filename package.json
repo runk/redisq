@@ -1,6 +1,6 @@
 {
     "name": "redisq",
-    "version": "0.1.8",
+    "version": "0.1.9",
     "homepage": "https://github.com/runk/redisq",
     "description": "Fast redis based queue",
     "keywords": ["redis", "queue"],
