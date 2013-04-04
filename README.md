@@ -14,15 +14,33 @@ Fast message processing queue backed up by redis and nodejs.
 Sample code that shows how to create a new task and push it to the queue.
 
     var redisq = require('redisq');
+    redisq.options({ "redis": {
+        "host": "example.com",
+        "port": 6379
+    }});
+
     var queue = redisq.queue('dummy');
     var task = { "foo": { "bar": true }, "data": [10, 20] };
     queue.push(task);
 
+By default queue tries to establish a connection with redis server running on the localhost.
+Otherwise you can change this behaviour by using `options` function.
+
+    redisq.options({ "redis": {
+        "host": "example.com",
+        "port": 6379
+    }});
+
 To process your messages you have to create one or multiply clients that will
 'listen' for new tasks and handle them in appropriate way.
 
-    var redisq = require('redisq'),
-        queue = redisq.queue('dummy'),
+    var redisq = require('redisq');
+    redisq.options({ "redis": {
+        "host": "example.com",
+        "port": 6379
+    }});
+
+    var queue = redisq.queue('dummy'),
         concurrency = 16;
 
     queue.process(function(task, done) {
@@ -33,8 +51,11 @@ To process your messages you have to create one or multiply clients that will
 Please note that you have to call `done` function and pass error as the first argument
 (if there are any) and result as a second argument.
 
-If you task was failed, the queue code pushes it back to the queue for another attempt.
+If task failed, it will be pushed back to the queue for another attempt.
+Otherwise you can set a `retry` flag to false so failed tasks will be ignored.
 
+    var queue = redisq.queue("myqueue");
+    queue.retry = false;
 
 ## Frontend
 
@@ -69,4 +90,6 @@ Also you can setup your monitoring tools to check the queue health by using spec
 
 This method returns `200` if everything is fine, otherwise status would be `500`. The check fetches
 last 15 minutes of history and detects if your workers can't handle all tasks you create.
+
+
 
