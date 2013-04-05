@@ -1,7 +1,11 @@
 $(document).ready(function() {
 
-  var _last = '',
-    _chart;
+  var _last       = '',
+    _chart        = null,
+    _extremes     = { min: 0, max: 0 },
+    _lastExtremes = { min: 0, max: 0 },
+    _dragging     = Date.now(),
+    _draggingTimer = null;
 
   var SERIES_PROCESSED = 0,
       SERIES_FAILED    = 1,
@@ -10,8 +14,13 @@ $(document).ready(function() {
   function _createChart(stats) {
     var ndata = stats.history.processed.concat([[ new Date().getTime(), null ]]);
 
+    Highcharts.setOptions({
+      global: {
+        useUTC: false
+      }
+    });
+
     _chart = new Highcharts.StockChart({
-      global: { useUTC: false },
       rangeSelector: {
         inputEnabled: false,
         buttons: [
@@ -23,7 +32,16 @@ $(document).ready(function() {
         ],
         selected: 2
       },
-      chart: { renderTo: 'chartbox' },
+      chart: {
+        renderTo: 'chartbox',
+        events: {
+          redraw: function() {
+            _extremes.min = parseInt(this.xAxis[0].min);
+            _extremes.max = parseInt(this.xAxis[0].max);
+            _afterSetExtremes();
+          }
+        }
+      },
       title: { text: null },
       plotOptions: {
         spline: {
@@ -51,8 +69,8 @@ $(document).ready(function() {
           dataGrouping: { enabled: false }
       }],
       xAxis : {
-        events : { afterSetExtremes: _afterSetExtremes },
-        minRange: 3600 * 1000
+        // events : { afterSetExtremes: _afterSetExtremes },
+        minRange: 2 * 3600 * 1000
       },
       navigator : {
         adaptToUpdatedData: false,
@@ -62,21 +80,39 @@ $(document).ready(function() {
   }
 
   function _afterSetExtremes(e) {
-    var url,
-      currentExtremes = this.getExtremes();
 
-    _chart.showLoading('Loading data from server...');
+    _dragging = Date.now();
 
-    $.getJSON("/queues/" + qname + "/history", { last: _last, min: e.min, max: e.max }, function(stats) {
-      if (stats.history) {
-        _chart.series[SERIES_PROCESSED].setData(stats.history.processed);
-        _chart.series[SERIES_FAILED].setData(stats.history.failed);
-        _chart.series[SERIES_BACKLOG].setData(stats.history.backlog);
-      }
+    if (_draggingTimer)
+      return;
 
-      _chart.hideLoading();
-      _last = stats.sig;
-    });
+    _draggingTimer = setInterval(function() {
+      if (Date.now() - _dragging < 1000)
+        return;
+
+      clearInterval(_draggingTimer);
+      _draggingTimer = null;
+
+      if (_extremes.min == _lastExtremes.min && _extremes.max == _lastExtremes.max)
+        return;
+
+      _chart.showLoading('Loading data from server...');
+
+      _lastExtremes.min = _extremes.min;
+      _lastExtremes.max = _extremes.max;
+
+      $.getJSON("/queues/" + qname + "/history", { last: _last, min: _extremes.min, max: _extremes.max }, function(stats) {
+        if (stats.history) {
+          _chart.series[SERIES_PROCESSED].setData(stats.history.processed);
+          _chart.series[SERIES_FAILED].setData(stats.history.failed);
+          _chart.series[SERIES_BACKLOG].setData(stats.history.backlog);
+        }
+
+        _chart.hideLoading();
+        _last = stats.sig;
+      });
+    }, 500);
+
   };
 
   function _getCounters() {
