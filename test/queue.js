@@ -43,15 +43,19 @@ describe("/lib/queue", function() {
             });
         });
 
-        it("should raise and exception for empty task", function() {
+        it("should raise an exception for empty task", function() {
             assert.throws(function() {
                 q.push();
             }, Error);
         });
 
-        it("should raise and exception for empty callback fn", function() {
+        it("should not raise an exception for a call without fn arg", function() {
+            q.push(qtask);
+        });
+
+        it("should raise an exception for a non-function second arg", function() {
             assert.throws(function() {
-                q.push(qtask);
+                q.push('a', 'b');
             }, Error);
         });
     });
