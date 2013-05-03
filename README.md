@@ -49,12 +49,12 @@ To process your messages you have to create one or multiply clients that will
     }, concurrency);
 
 Please note that you have to call `done` function and pass error as the first argument
-(if there are any). 
+(if there are any).
 
-The second argument is optional data that will replace the current task (if it fails) with the new data. This can be used for keep track of the number of tries, or updating the data to be worked on based on certain fail conditions. 
+The second argument is optional data that will replace the current task (if it fails) with the new data. This can be used for keep track of the number of tries, or updating the data to be worked on based on certain fail conditions.
 
-For example: 
-    
+For example:
+
     var request = require("request");
     queue.process(function(task, done){
         request
@@ -69,7 +69,7 @@ For example:
                 if(!res.results) {
                     //Update the task's url property to try a different version of the api
                     task.url = task.url + "/v2/";
-                    return done(err, task); 
+                    return done(err, task);
                 }
 
                 //Otherwise everything is all good in the hood
@@ -85,8 +85,9 @@ Otherwise you can set a `retry` flag to false so failed tasks will be ignored.
 
 ## Frontend
 
-Module has a useful frontend that you can use for monitoring of the queue status. To run
-it use the following code:
+Module has a useful frontend that you can use for monitoring of the queue status.
+By default queue saves statistics to redis once a minute and stores it for 14 days.
+To run it use the following code:
 
     var frontend = require('redisq/frontend');
     frontend.listen();
@@ -103,7 +104,14 @@ In case if you want to customize host, port etc, you can pass additional argumen
         }
     });
 
-By default queue saves statistics to redis once a minute and stores it for 14 days.
+Frontend uses express framework and exposes `app` for customization, for example adding basic authentication:
+
+    var
+        frontend = require("./frontend"),
+        express = require("express");
+
+    frontend.app.use(express.basicAuth("user", "pass"));
+    frontend.listen(3000);
 
 Also you can setup your monitoring tools to check the queue health by using special `/status` uri:
 
@@ -117,14 +125,6 @@ Also you can setup your monitoring tools to check the queue health by using spec
 This method returns `200` if everything is fine, otherwise status would be `500`. The check fetches
 last 15 minutes of history and detects if your workers can't handle all tasks you create.
 
-Frontend uses express and exposes `app` for customization, for example adding basic authentication: 
 
-    var 
-        frontend = require("./frontend"),
-        express = require("express");
-
-    frontend.app.use(express.basicAuth("user", "pass"));
-
-    frontend.listen(3000);
 
 
