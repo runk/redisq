@@ -117,5 +117,14 @@ Also you can setup your monitoring tools to check the queue health by using spec
 This method returns `200` if everything is fine, otherwise status would be `500`. The check fetches
 last 15 minutes of history and detects if your workers can't handle all tasks you create.
 
+Frontend uses express and exposes `app` for customization, for example adding basic authentication: 
+
+    var 
+        frontend = require("./frontend"),
+        express = require("express");
+
+    frontend.app.use(express.basicAuth("user", "pass"));
+
+    frontend.listen(3000);
 
 
