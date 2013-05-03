@@ -163,7 +163,7 @@ describe("/lib/queue", function() {
             })
         });
 
-        it("should not lost task if it was failed first time", function(done) {
+        it("should not lose a task if it failed the first time", function(done) {
             var first = true;
             var processed = 0;
             var worker = function(task, cb) {
@@ -227,6 +227,35 @@ describe("/lib/queue", function() {
                 q.push(t, function() {});
 
             q.process(worker, 4);
+        });
+
+        it("should update a task on failure", function(done){
+            
+            var work = 0;
+            var worker = function(task, cb) {
+                if(work > 0) {
+                    assert.equal(task.err, false);
+                    assert.equal(task.yay, 1);
+                    return done();
+                } else {
+                    work++;
+                    assert.equal(task.err, true);
+                    assert.equal(task.yay, 0);
+                }
+               
+                if(task.err) {
+                    task.err = false;
+                    task.yay = 1;
+                    cb(true, task);
+                } else {
+                    cb(null);
+                }
+            };
+
+            q.push({ err: true, yay: 0 }, function(err,res){
+                q.process(worker, 1);    
+            });
+            
         });
 
     });
