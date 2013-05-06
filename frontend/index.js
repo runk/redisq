@@ -9,7 +9,6 @@ module.exports.listen = function(port, cb, opts) {
     if (typeof opts == "object") redisq.options(opts);
 
     port = port || 3000;
-    // host = host || "localhost";
 
     worker.configure();
     worker.app.listen(port, cb);
