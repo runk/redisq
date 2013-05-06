@@ -2,19 +2,16 @@ var worker = require("./worker");
 
 module.exports.app = worker.app;
 
-module.exports.listen = function(port, host, opts) {
+module.exports.listen = function(port, cb, opts) {
 
     var redisq  = require('../');
 
     if (typeof opts == "object") redisq.options(opts);
 
     port = port || 3000;
-    host = host || "localhost";
+    // host = host || "localhost";
 
     worker.configure();
-    worker.app.listen(port, host, function(){
-        console.log('Redisq frontend has been started on %s:%s, pid: %s',
-            host, port, process.pid);
-    });
+    worker.app.listen(port, cb);
 
 };
