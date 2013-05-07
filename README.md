@@ -1,5 +1,5 @@
 
-redisq
+redisq [![Build Status](https://travis-ci.org/runk/redisq.png)](https://travis-ci.org/runk/redisq)
 =====
 
 Fast message processing queue backed up by redis and nodejs.

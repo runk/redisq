@@ -11,6 +11,9 @@
         "jade": "0.27.7",
         "async": "0.1.22"
     },
+    "devDependencies": {
+        "mocha": ">= 1.8"
+    },
     "repository": {
         "type":"git",
         "url":"git@github.com:runk/redisq.git"
