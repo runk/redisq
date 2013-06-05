@@ -4,8 +4,7 @@ var express = require('express'),
 
 module.exports.app = app;
 
-module.exports.configure = function(){
-    //app.use(express.basicAuth("foo", "bar"));
+module.exports.configure = function() {
     app.configure(function() {
         app.set('views', __dirname + '/views');
         app.set('view engine', 'jade');
@@ -28,9 +27,4 @@ module.exports.configure = function(){
     app.get("/queues/:name/counters", require(__dirname + '/controllers/queues').countersGet);
     app.post("/queues/:name/history-reset", require(__dirname + '/controllers/queues').historyReset);
     app.get("/status", require(__dirname + '/controllers/status'));
-}
-
-
-
-
-
+};

@@ -12,9 +12,8 @@ module.exports.listen = function(port, host, opts) {
     host = host || "localhost";
 
     worker.configure();
-    worker.app.listen(port, host, function(){
+    worker.app.listen(port, host, function() {
         console.log('Redisq frontend has been started on %s:%s, pid: %s',
             host, port, process.pid);
     });
-
 };
