@@ -93,14 +93,21 @@ it use the following code:
 
 ![frontend](http://i.steppic.com/6/b/9/5/6b95ef357cbd101529e48d011349e1c7/0.png)
 
-In case if you want to customize port, you can pass additional arguments to the `listen` metod:
+In case if you want to customize port or provide a callback, you can pass additional arguments to the `listen` metod:
 
-    var frontend = require('redisq/frontend');
-    frontend.listen(3000, {
-        "redis": {
-            "host": "example.com",
-            "port": 6379
-        }
+    var 
+        frontend = require('redisq/frontend'),
+        redis_options = {
+            "redis": {
+                "host": "example.com",
+                "port": 6379
+            }
+        };
+
+    frontend.listen(3000, function(){
+            console.log("Redisq frontend running on port 3000");
+        },
+        redis_options
     });
 
 By default queue saves statistics to redis once a minute and stores it for 14 days.
