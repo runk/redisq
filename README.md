@@ -67,12 +67,12 @@ For example:
 ```javascript
 var request = require("request");
 queue.process(function(task, cb) {
-    request(task.url + "/api/data.json", function(err, res) {
+    request(task.url + "/api/data.json", function(err, res, body) {
         // Retry the task with the same data
         if (err)
             return cb(err);
 
-        if (!res.results) {
+        if (res.statusCode !== 200) {
             // Update the task's url property to try a different version of the api
             task.url = task.url + "/v2/";
             return cb(err, task);
@@ -102,8 +102,6 @@ is ready to proceed, call `queue.resume()`.
 ```javascript
 var queue = redisq.queue('dummy');
 queue.process(function(task, cb) {
-  queue.pause();
-
   // check whether your system ready for new tasks
   if (isPauseRequired()) {
     // pause if not
@@ -114,7 +112,6 @@ queue.process(function(task, cb) {
     // task won't be lost if you return an error
     return cb(new Error('It is better to wait..'));
   }
-
   cb(null);
 });
 ```
