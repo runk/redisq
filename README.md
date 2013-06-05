@@ -93,10 +93,10 @@ it use the following code:
 
 ![frontend](http://i.steppic.com/6/b/9/5/6b95ef357cbd101529e48d011349e1c7/0.png)
 
-In case if you want to customize host, port etc, you can pass additional arguments to the `listen` metod:
+In case if you want to customize port, you can pass additional arguments to the `listen` metod:
 
     var frontend = require('redisq/frontend');
-    frontend.listen(3000, "localhost", {
+    frontend.listen(3000, {
         "redis": {
             "host": "example.com",
             "port": 6379
