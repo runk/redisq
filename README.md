@@ -94,14 +94,20 @@ To run it use the following code:
 
 ![frontend](http://i.steppic.com/6/b/9/5/6b95ef357cbd101529e48d011349e1c7/0.png)
 
-In case if you want to customize host, port etc, you can pass additional arguments to the `listen` metod:
+In case if you want to customize host, port or provide a callback, you can pass additional arguments to the `listen` metod:
 
-    var frontend = require('redisq/frontend');
-    frontend.listen(3000, "localhost", {
-        "redis": {
-            "host": "example.com",
-            "port": 6379
-        }
+    var
+        frontend = require('redisq/frontend'),
+        options = {
+            "redis": {
+                "host": "example.com",
+                "port": 6379
+            }
+        };
+
+    // frontend.listen(port, [hostname], [options], [callback])
+    frontend.listen(3000, 'localhost', options, function() {
+        console.log("Redisq frontend running on port 3000");
     });
 
 Frontend uses express framework and exposes `app` for customization, for example adding basic authentication:

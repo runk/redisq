@@ -1,19 +1,41 @@
-var worker = require("./worker");
+var worker = require("./worker"),
+    redisq  = require('../');
 
 module.exports.app = worker.app;
 
-module.exports.listen = function(port, host, opts) {
+module.exports.listen = function(port, host, opts, callback) {
 
-    var redisq  = require('../');
+    var params = {
+        'port': 3000,
+        'host': 'localhost',
+        'opts': null,
+        'callback': function() {
+            console.log('Redisq frontend has been started on %s:%s, pid: %s',
+                params.host, params.port, process.pid);
+        }
+    };
 
-    if (typeof opts == "object") redisq.options(opts);
+    if (port != undefined)
+        params.port = port;
 
-    port = port || 3000;
-    host = host || "localhost";
+    if (typeof host == 'string')
+        params.host = host;
+    else if (typeof host == 'object')
+        params.opts = host;
+    else if (typeof host == 'function')
+        params.callback = host;
+
+    if (typeof opts == 'object')
+        params.opts = opts;
+    else if (typeof opts == 'function')
+        params.callback = opts;
+
+    if (typeof callback == 'function')
+        params.callback = callback;
+
+    if (params.opts)
+        redisq.options(opts);
 
     worker.configure();
-    worker.app.listen(port, host, function() {
-        console.log('Redisq frontend has been started on %s:%s, pid: %s',
-            host, port, process.pid);
-    });
+    worker.app.listen(params.port, params.host, params.callback);
 };
