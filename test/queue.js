@@ -258,6 +258,53 @@ describe("/lib/queue", function() {
             
         });
 
+        it("should create more items", function(done) {
+            var tasksPushed = 0;
+            var tasks = [];
+            for (var i = 0; i < tasksn; i++)
+                q.push('dummy', function(err, res) {
+                    assert.equal(err, null);
+                    assert.equal(res, true);
+                    tasksPushed++;
+                });
+            setTimeout(function() {
+                assert.equal(tasksn, tasksPushed);
+                done();
+            }, 10);
+        });
+
+        it("should process half the items and pause", function(done) {
+            var finished = 0;
+            function worker(task, cb) {
+                finished++;
+                if (finished === 13) {
+                    q.pause();
+                    done();
+                    setTimeout(function() {
+                        assert.notEqual(finished, 25);
+                    }, 20);
+                } else if (finished < 13) {
+                    cb();
+                } else {
+                    cb(true);
+                }
+            }
+
+            q.process(worker, 1);
+        });
+
+        it("should return false if the queue is paused", function(done) {
+            assert.equal(q.active, false);
+            done();
+        });
+
+        it("should return len 12 after half processing", function(done) {
+            q.len(function(err, len) {
+                assert.equal(len, 12);
+                done();
+            })
+        });
+
     });
 
 });
