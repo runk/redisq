@@ -83,6 +83,22 @@ Otherwise you can set a `retry` flag to false so failed tasks will be ignored.
     var queue = redisq.queue("myqueue");
     queue.retry = false;
 
+Optionally, you can pause the queue in the event your downstream prerequisites have
+failed.  Within your processing function, call `queue.pause()`.  Once the queue
+is ready to proceed, call `queue.resume()`.
+
+    var queue = redisq.queue('dummy');
+    (function headsOrTails() {
+      if (Math.random() > .5) { queue.resume(); } else { console.log("Not this time. :("); }
+      setTimeout(headsOrTails, 2000);
+    })();
+
+    queue.process(function(task, done) {
+      console.log(task); // -> { "foo": { "bar": true }, "data": [10, 20] }
+      queue.pause();
+      done({ message: 'You broke it!' });
+    });
+
 ## Frontend
 
 Module has a useful frontend that you can use for monitoring of the queue status.
