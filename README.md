@@ -43,38 +43,37 @@ To process your messages you have to create one or multiply clients that will
     var queue = redisq.queue('dummy'),
         concurrency = 16;
 
-    queue.process(function(task, done) {
+    queue.process(function(task, cb) {
         console.log(task); // -> { "foo": { "bar": true }, "data": [10, 20] }
-        done(null);
+        cb(null);
     }, concurrency);
 
-Please note that you have to call `done` function and pass error as the first argument
+Please note that you have to call `cb` function and pass error as the first argument
 (if there are any).
+
+
+### Changing tasks while processing
 
 The second argument is optional data that will replace the current task (if it fails) with the new data. This can be used for keep track of the number of tries, or updating the data to be worked on based on certain fail conditions.
 
 For example:
 
     var request = require("request");
-    queue.process(function(task, done){
-        request
-            .get(task.url + "/api/data.json")
-            .query({something: task.something})
-            .end(function(err, res){
-                if(err) {
-                    //Retry the task with the same data
-                    return done(err);
-                }
+    queue.process(function(task, cb) {
+        request(task.url + "/api/data.json", function(err, res) {
+            // Retry the task with the same data
+            if (err)
+                return cb(err);
 
-                if(!res.results) {
-                    //Update the task's url property to try a different version of the api
-                    task.url = task.url + "/v2/";
-                    return done(err, task);
-                }
+            if (!res.results) {
+                // Update the task's url property to try a different version of the api
+                task.url = task.url + "/v2/";
+                return cb(err, task);
+            }
 
-                //Otherwise everything is all good in the hood
-                return done(null);
-            });
+            //Otherwise everything is all good in the hood
+            return cb(null);
+        });
     });
 
 If task failed, it will be pushed back to the queue for another attempt.
@@ -83,21 +82,31 @@ Otherwise you can set a `retry` flag to false so failed tasks will be ignored.
     var queue = redisq.queue("myqueue");
     queue.retry = false;
 
+
+### Pause / resume processing
+
 Optionally, you can pause the queue in the event your downstream prerequisites have
-failed.  Within your processing function, call `queue.pause()`.  Once the queue
+failed. You can pause processing anytime by calling `queue.pause()`. Once the queue
 is ready to proceed, call `queue.resume()`.
 
     var queue = redisq.queue('dummy');
-    (function headsOrTails() {
-      if (Math.random() > .5) { queue.resume(); } else { console.log("Not this time. :("); }
-      setTimeout(headsOrTails, 2000);
-    })();
-
-    queue.process(function(task, done) {
-      console.log(task); // -> { "foo": { "bar": true }, "data": [10, 20] }
+    queue.process(function(task, cb) {
       queue.pause();
-      done({ message: 'You broke it!' });
+
+      // check whether your system ready for new tasks
+      if (isPauseRequired()) {
+        // pause if not
+        queue.pause()
+        // resume to processing in 5 seconds
+        setTimeout(function() { queue.resume() }, 5000);
+
+        // task won't be lost if you return an error
+        return cb(new Error('It is better to wait..'));
+      }
+
+      cb(null);
     });
+
 
 ## Frontend
 
