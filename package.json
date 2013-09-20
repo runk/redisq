@@ -23,7 +23,8 @@
         "url":"http://github.com/runk/redisq/issues"
     },
     "scripts": {
-        "test": "mocha -R spec --recursive"
+        "test": "mocha -R spec --recursive",
+        "test-w": "mocha -R spec --recursive --growl --watch"
     },
     "main": "index.js",
     "engine": {
