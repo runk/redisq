@@ -4,12 +4,12 @@
     "homepage": "https://github.com/runk/redisq",
     "description": "Fast redis based queue",
     "keywords": ["redis", "queue"],
-    "author": "Shirokov Dmitry <deadrunk@gmail.com>",
+    "author": "Dmitry Shirokov <deadrunk@gmail.com>",
     "dependencies": {
-        "redis": "0.8.2",
-        "express": "3.0.5",
-        "jade": "0.27.7",
-        "async": "0.1.22"
+        "redis": "0.8.4",
+        "express": "3.4.0",
+        "jade": "0.35.0",
+        "async": "0.2.9"
     },
     "devDependencies": {
         "mocha": ">= 1.8"
