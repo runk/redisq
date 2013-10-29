@@ -28,9 +28,12 @@ describe('/lib/queue', function() {
       });
   });
 
-  afterEach(function() {
-    q.destroy();
-    delete(d)
+  afterEach(function(done) {
+    q.purge(function(err) {
+      q.destroy();
+      delete(d);
+      done(err);
+    });
   });
 
 
@@ -236,6 +239,7 @@ describe('/lib/queue', function() {
         if (work > 0) {
           assert.equal(task.err, false);
           assert.equal(task.value, 'new value');
+          cb(null);
           return done();
         } else {
           work++;
@@ -244,9 +248,7 @@ describe('/lib/queue', function() {
         }
 
         if (task.err) {
-          task.err = false;
-          task.value = 'new value';
-          cb(true, task);
+          cb(true, {err: false, value: 'new value'});
         } else {
           cb(null);
         }
@@ -254,10 +256,12 @@ describe('/lib/queue', function() {
 
       // empty the queue and add some stuff
       q.purge(function(err, res) {
-        q.push({ err: true, value: 'old value' }, function(err,res){
+        if (err) return done(err);
+        q.push({err: true, value: 'old value'}, function(err, res) {
+          if (err) return done(err);
           q.process(worker, 1);
         });
-      })
+      });
     });
   });
 
