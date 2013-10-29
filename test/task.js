@@ -1,29 +1,29 @@
 var assert = require("assert"),
     Task  = require("../lib/task");
 
-var qtask = { "one": 1, "two": 2, "three": 3 };
+var qtask = {one: 1, two: 2, three: 3};
 
-describe("/lib/task", function() {
+describe('/lib/task', function() {
 
-    describe("#constructor", function() {
-        it("should create new instance of the Task", function() {
+    describe('#constructor', function() {
+        it('should create new instance of the Task', function() {
             var t = new Task(qtask);
-            assert.equal(typeof t, "object");
+            assert.equal(typeof t, 'object');
         });
 
-        it("should have required methods", function() {
+        it('should have required methods', function() {
             // static
-            assert.equal(typeof Task.parse, "function");
+            assert.equal(typeof Task.parse, 'function');
 
             var t = new Task(qtask);
-            assert.equal(typeof t.stringify, "function");
-            assert.equal(typeof t.normalize, "function");
-            assert.equal(typeof t.getData, "function");
+            assert.equal(typeof t.stringify, 'function');
+            assert.equal(typeof t.normalize, 'function');
+            assert.equal(typeof t.getData, 'function');
         });
     });
 
-    describe("#normalize", function() {
-        it("should return normalized task object", function() {
+    describe('#normalize', function() {
+        it('should return normalized task object', function() {
             var now = new Date().getTime();
 
             var t = new Task(qtask);
@@ -36,18 +36,18 @@ describe("/lib/task", function() {
         });
     });
 
-    describe("#stringify", function() {
-        it("should return raw json object", function() {
+    describe('#stringify', function() {
+        it('should return raw json object', function() {
             var t = new Task(qtask);
             var raw = JSON.parse(t.stringify());
-            assert.equal(typeof raw, "object");
+            assert.equal(typeof raw, 'object');
             assert.equal(Object.keys(raw).length, 4);
         });
     });
 
-    describe("#parse", function() {
+    describe('#parse', function() {
         var tdata = '[0,1356374139227,{"one":1,"two":2},0]';
-        it("should return new task with defined params", function() {
+        it('should return new task with defined params', function() {
             var t = Task.parse(tdata);
             assert.equal(t.stringify(), tdata);
 
