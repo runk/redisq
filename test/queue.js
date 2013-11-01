@@ -1,11 +1,9 @@
-
-
 var assert = require('assert'),
   Queue  = require('../lib/queue'),
   redisq = require('../lib/redisq');
 
 var qname = 'test',
-  qtask = JSON.stringify({ 'one': 1, 'two': 2, 'three': 3 });
+  qtask = JSON.stringify({one: 1, two: 2, three: 3});
 
 describe('/lib/queue', function() {
 
