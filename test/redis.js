@@ -13,14 +13,14 @@ describe('/lib/redis', function() {
     });
 
     it('should set new options', function() {
-      redis.options({ 'host': 'example.com', 'port': 1234 });
+      redis.options({host: 'example.com', port: 1234});
       var opts = redis.options();
       assert.equal(opts.port, 1234);
       assert.equal(opts.host, 'example.com');
     });
 
     it('should override options', function() {
-      redis.options({ 'host': 'example2.com', 'port': 12345 });
+      redis.options({host: 'example2.com', port: 12345});
       var opts = redis.options();
       assert.equal(opts.port, 12345);
       assert.equal(opts.host, 'example2.com');
