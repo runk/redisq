@@ -35,7 +35,7 @@ describe('/lib/queue', function() {
   });
 
 
-  describe('#constructor', function() {
+  describe('constructor()', function() {
     it('should create new instance of the Queue', function() {
       assert.equal(typeof q, 'object');
       assert.equal(q.name, qname);
@@ -47,7 +47,7 @@ describe('/lib/queue', function() {
   });
 
 
-  describe('#len', function() {
+  describe('len()', function() {
     it('should return a number', function(done) {
       q.len(function(err, len) {
         assert.ok(isFinite(len));
@@ -58,7 +58,7 @@ describe('/lib/queue', function() {
   });
 
 
-  describe('#push', function() {
+  describe('push()', function() {
 
     it('should create a new task', function(done) {
       q.push(qtask, function(err, res) {
@@ -86,7 +86,7 @@ describe('/lib/queue', function() {
   });
 
 
-  describe('#purge', function() {
+  describe('purge()', function() {
     it('should empty the queue', function(done) {
       q.purge(function(err, res) {
         assert.equal(err, null);
@@ -111,7 +111,7 @@ describe('/lib/queue', function() {
   });
 
 
-  describe('#unregister', function() {
+  describe('unregister()', function() {
     it('should unregister the queue', function(done) {
       q.unregister(function() {
         redisq.getQueues(function(err, queues) {
@@ -123,7 +123,7 @@ describe('/lib/queue', function() {
   });
 
 
-  describe('#register', function() {
+  describe('register()', function() {
     it('should register the queue', function(done) {
       q.register(function() {
         redisq.getQueues(function(err, queues) {
@@ -135,7 +135,7 @@ describe('/lib/queue', function() {
   });
 
 
-  describe('#process', function() {
+  describe('process()', function() {
 
     it('should start processing and maintain counters correct', function(done) {
       var finished = 0;

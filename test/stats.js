@@ -3,7 +3,8 @@ var assert = require('assert'),
 
 
 describe('/lib/stats', function() {
-  describe('#parseAndGroup', function() {
+
+  describe('parseAndGroup()', function() {
     var qrecords = [
       '[1360684264000,100,10,1,200,500,1000]',
       '[1360684264000,200,20,2,250,550,2000]',
@@ -33,7 +34,7 @@ describe('/lib/stats', function() {
   });
 
 
-  describe('#erase', function() {
+  describe('erase()', function() {
     var s = new Stats('test');
 
     s.cnt.failed++;
@@ -52,7 +53,7 @@ describe('/lib/stats', function() {
   });
 
 
-  describe('#getGroupingValue', function() {
+  describe('getGroupingValue()', function() {
     var s = new Stats('test');
 
     it('should return minutes', function() {

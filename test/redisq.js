@@ -5,7 +5,7 @@ var assert = require('assert'),
 
 describe('/index', function() {
 
-  describe('#options', function() {
+  describe('options()', function() {
     it('should save settings passed to the func', function() {
       redisq.options({
         'redis': {host: '127.0.0.1', port: 6380}
@@ -31,7 +31,7 @@ describe('/index', function() {
   });
 
 
-  describe('#queue', function() {
+  describe('queue()', function() {
     it('new queue should be created', function() {
       var q = redisq.queue('test');
       assert.equal(typeof q, 'object');
@@ -39,7 +39,7 @@ describe('/index', function() {
   });
 
 
-  describe('#hasQueue', function() {
+  describe('hasQueue()', function() {
     it('should return true for existed queue', function(done) {
       redisq.hasQueue('test', function(err, status) {
         assert.equal(err, null);
@@ -58,7 +58,7 @@ describe('/index', function() {
   });
 
 
-  describe('#getQueues', function() {
+  describe('getQueues()', function() {
     it('should return a key -> value hash', function(done) {
       redisq.getQueues(function(err, queues) {
         assert.equal(typeof queues, 'object');
@@ -70,7 +70,7 @@ describe('/index', function() {
   });
 
 
-  describe('#getCounters', function() {
+  describe('getCounters()', function() {
     it('should return counters and at least do not crash', function(done) {
       redisq.getCounters(function(err, counters) {
         assert.equal(typeof counters, 'object');

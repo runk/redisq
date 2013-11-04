@@ -4,7 +4,7 @@ var assert = require('assert'),
 
 describe('/lib/redis', function() {
 
-  describe('#options', function() {
+  describe('options()', function() {
     it('should return default options', function() {
       var opts = redis.options();
       assert.equal(opts.port, 6379);
@@ -28,7 +28,7 @@ describe('/lib/redis', function() {
   });
 
 
-  describe('#client', function() {
+  describe('client()', function() {
     it('should return redis client', function() {
       redis.options({
         host: 'localhost',
