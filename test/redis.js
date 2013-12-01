@@ -1,5 +1,5 @@
 var assert = require('assert'),
-  redis  = require('../lib/redis');
+  redis = require('../lib/redis');
 
 
 describe('/lib/redis', function() {
@@ -29,6 +29,16 @@ describe('/lib/redis', function() {
 
 
   describe('client()', function() {
+
+    it('should assign given redis client', function() {
+      function RedisClient() {}
+      RedisClient.prototype.foo = 'bar';
+
+      redis.client(new RedisClient);
+      assert.equal(redis.client().foo, 'bar');
+      redis.client(null);
+    });
+
     it('should return redis client', function() {
       redis.options({
         host: 'localhost',
