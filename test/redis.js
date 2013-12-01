@@ -30,14 +30,14 @@ describe('/lib/redis', function() {
 
   describe('client()', function() {
 
-    // it('should assign given redis client', function() {
-    //   function RedisClient() {}
-    //   RedisClient.prototype.foo = 'bar';
+    it('should assign given redis client', function() {
+      function RedisClient() {}
+      RedisClient.prototype.foo = 'bar';
 
-    //   redis.client(new RedisClient);
-    //   assert.equal(redis.client().foo, 'bar');
-    //   redis.client(null);
-    // });
+      redis.client(new RedisClient);
+      assert.equal(redis.client().foo, 'bar');
+      redis.client(null);
+    });
 
     it('should return redis client', function() {
       redis.options({
