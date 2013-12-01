@@ -15,24 +15,30 @@ Sample code that shows how to create a new task and push it to the queue.
 
 ```javascript
 var redisq = require('redisq');
-redisq.options({ "redis": {
-    "host": "example.com",
-    "port": 6379
+redisq.options({redis: {
+  host: 'example.com',
+  port: 6379
 }});
 
 var queue = redisq.queue('dummy');
-var task = { "foo": { "bar": true }, "data": [10, 20] };
+var task = {foo: {bar: true}, data: [10, 20]};
 queue.push(task);
 ```
 
 By default queue tries to establish a connection with redis server running on the localhost.
-Otherwise you can change this behaviour by using `options` function.
+Otherwise you can change this behaviour by using `options` function. Alternatively you can
+provide a ready-to-go *redis* client.
 
 ```javascript
-redisq.options({ "redis": {
-    "host": "example.com",
-    "port": 6379
+redisq.options({redis: {
+  host: 'example.com',
+  port: 6379
 }});
+
+// or
+var myClient = require('redis').createClient(6379, 'example.com');
+redisq.options({redis: myClient});
+
 ```
 
 To process your messages you have to create one or multiply clients that will
@@ -40,17 +46,17 @@ To process your messages you have to create one or multiply clients that will
 
 ```javascript
 var redisq = require('redisq');
-redisq.options({ "redis": {
-    "host": "example.com",
-    "port": 6379
+redisq.options({redis: {
+  host: 'example.com',
+  port: 6379
 }});
 
 var queue = redisq.queue('dummy'),
     concurrency = 16;
 
 queue.process(function(task, cb) {
-    console.log(task); // -> { "foo": { "bar": true }, "data": [10, 20] }
-    cb(null);
+  console.log(task); // -> { "foo": { "bar": true }, "data": [10, 20] }
+  cb(null);
 }, concurrency);
 ```
 
@@ -67,20 +73,20 @@ For example:
 ```javascript
 var request = require("request");
 queue.process(function(task, cb) {
-    request(task.url + "/api/data.json", function(err, res, body) {
-        // Retry the task with the same data
-        if (err)
-            return cb(err);
+  request(task.url + "/api/data.json", function(err, res, body) {
+    // Retry the task with the same data
+    if (err)
+      return cb(err);
 
-        if (res.statusCode !== 200) {
-            // Update the task's url property to try a different version of the api
-            task.url = task.url + "/v2/";
-            return cb(err, task);
-        }
+    if (res.statusCode !== 200) {
+      // Update the task's url property to try a different version of the api
+      task.url = task.url + "/v2/";
+      return cb(err, task);
+    }
 
-        //Otherwise everything is all good in the hood
-        return cb(null);
-    });
+    //Otherwise everything is all good in the hood
+    return cb(null);
+  });
 });
 ```
 
@@ -133,12 +139,12 @@ In case if you want to customize host, port or provide a callback, you can pass 
 
 ```javascript
 var frontend = require('redisq/frontend'),
-    options = {
-        "redis": {
-            "host": "example.com",
-            "port": 6379
-        }
-    };
+  options = {
+    redis: {
+      host: 'example.com',
+      port: 6379
+    }
+  };
 
 // frontend.listen(port, [hostname], [options], [callback])
 frontend.listen(3000, 'localhost', options, function() {
@@ -150,7 +156,7 @@ Frontend uses express framework and exposes `app` for customization, for example
 
 ```javascript
 var frontend = require("./frontend"),
-    express = require("express");
+  express = require("express");
 
 frontend.app.use(express.basicAuth("user", "pass"));
 frontend.listen(3000);
