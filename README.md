@@ -26,8 +26,7 @@ queue.push(task);
 ```
 
 By default queue tries to establish a connection with redis server running on the localhost.
-Otherwise you can change this behaviour by using `options` function. Alternatively you can
-provide a ready-to-go *redis* client.
+Otherwise you can change this behaviour by using `options` function.
 
 ```javascript
 redisq.options({redis: {
@@ -35,7 +34,7 @@ redisq.options({redis: {
   port: 6379
 }});
 
-// or
+// alternatively you can provide custom redis client
 var myClient = require('redis').createClient(6379, 'example.com');
 redisq.options({redis: myClient});
 
